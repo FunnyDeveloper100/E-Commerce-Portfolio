@@ -28,10 +28,25 @@ class TopBar extends React.Component {
             classes,
         } = this.props;
 
+        const {customer} = this.props
+
         return (
             <AppBar className={classes.topBar}>
                 <Toolbar className={classes.toolbar}>
-                    <div className={classes.authText + ' ' + classes.divTopBar}>
+                    {
+                        customer ?
+                        <div className={classes.authText + ' ' + classes.divTopBar}>
+                            <span>Hi {customer.name}</span>
+                            <Link className={classes.authLink} style={{color: 'red'}}>
+                            My Profile
+                            </Link>
+                            <span>|</span>
+                            <Link className={classes.authLink} id="btnLogout" style={{color: 'red'}}>
+                             Logout
+                            </Link>
+                        </div>
+                        :
+                        <div className={classes.authText + ' ' + classes.divTopBar}>
                             <span>Hi!</span>
                             <Link onClick={() => {
                               this.props.showAuth(false)
@@ -44,17 +59,9 @@ class TopBar extends React.Component {
                               }} className={classes.authLink} id="btnRegister" style={{color: 'red'}}>
                               Register
                           </Link>
-                    </div>
-                    <div className={classes.authText + ' ' + classes.divTopBar}>
-                            <span>Hi Charles!</span>
-                            <Link className={classes.authLink} style={{color: 'red'}}>
-                            My Profile
-                            </Link>
-                            <span>|</span>
-                            <Link className={classes.authLink} id="btnLogout" style={{color: 'red'}}>
-                             Logout
-                            </Link>
-                    </div>
+                        </div>
+                    }
+
                     <Hidden mdDown className={classes.divTopBar}>
                         <div className={classes.linksContainer}>
                             {
@@ -107,5 +114,10 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
+function mapStateToProps(state) {
+    return {
+        customer: state.customers.auth.customer
+    }
+}
 
-export default withStyles(styles, {withTheme: true})(connect(null, mapDispatchToProps)(TopBar));
+export default withStyles(styles, {withTheme: true})(connect(mapStateToProps, mapDispatchToProps)(TopBar));

@@ -1,54 +1,87 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {withStyles, InputBase, Badge, Drawer, Hidden, IconButton, Button, Toolbar, AppBar} from '@material-ui/core';
-import {bindActionCreators} from 'redux';
-import {connect} from "react-redux";
+import { withStyles, InputBase, Badge, Drawer, Hidden, IconButton, Button, Toolbar, AppBar } from '@material-ui/core';
+import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
 import SearchIcon from '@material-ui/icons/Search';
 import Menu from '@material-ui/icons/Menu';
 import {
     NavDropdown,
 } from 'react-bootstrap';
-import { Link }  from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './styles';
 import * as alertActions from "../../../../store/actions/alerts";
+import * as departmentsActions from "../../../../store/actions/departments";
+import * as categoryActions from "../../../../store/actions/category";
 import './style.css';
 
 class NavBar extends React.Component {
 
-    state = {
-        mobileOpen: false
-    };
+    constructor(props) {
+        super(props)
+        this.state = {
+            mobileOpen: false,
+        }
+    }
 
     handleDrawerToggle() {
         this.setState({ mobileOpen: !this.state.mobileOpen });
     }
 
-    componentDidMount(){
-      window.addEventListener('scroll', (event) => {
-        const scrollpos = window.scrollY;
-         if(scrollpos > 10){
-           this.setState({
-              activeClass: 'is-scrolled'
-           })
-         }else{
-             this.setState({
-                activeClass: 'is-ontop'
-             })
-         }
-      });
+    componentDidMount() {
+        window.addEventListener('scroll', (event) => {
+            const scrollpos = window.scrollY;
+            if (scrollpos > 10) {
+                this.setState({
+                    activeClass: 'is-scrolled'
+                })
+            } else {
+                this.setState({
+                    activeClass: 'is-ontop'
+                })
+            }
+        });
+    }
+
+    navDropdowns = (departments, categories) => {
+        if (departments) {
+            return departments.map((department) => {
+                return <NavDropdown
+                    title={department.name}
+                    className="department navDropdown"
+                >
+                    {
+                        categories &&
+                            categories.map(category => {
+                                if (department.department_id == category.department_id) {
+                                    return <NavDropdown.Item
+                                        onClick={() => { }}
+                                        className="category"
+                                    >
+                                        {category.name}
+                                    </NavDropdown.Item>
+                                }
+                            })
+                    }
+                </NavDropdown>
+            });
+        }
     }
 
     render() {
 
         const {
             classes,
-            brand
+            brand,
+            total,
+            departments,
+            categories,
         } = this.props;
 
         const brandComponent =
-        <Link to={'/'} className={classes.brand}>
-          {brand}
-        </Link>
+            <Link to={'/'} className={classes.brand}>
+                {brand}
+            </Link>
 
         return (
             <div>
@@ -58,93 +91,36 @@ class NavBar extends React.Component {
                             {brandComponent}
                         </div>
                         <Hidden mdDown>
-                        <div className={`departments categories ${classes.linksContainer}`}>
-                            <NavDropdown
-                                title='Regional'
-                                className="department navDropdown"
-                            >
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    French
-                                </NavDropdown.Item>
-
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    Italian
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    Irish
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                            <NavDropdown
-                                title='Nature'
-                                className="department navDropdown"
-                            >
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    Animal
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                >
-                                    Flower
-                                </NavDropdown.Item>
-
-                            </NavDropdown>
-
-                            <NavDropdown
-                                title='Seasonal'
-                                className="department navDropdown"
-                            >
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    Christmas
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    onClick={() => {}}
-                                    className="category"
-                                >
-                                    Valentine's
-                                </NavDropdown.Item>
-
-                            </NavDropdown>
-                        </div>
-                        </Hidden>
-                        <Hidden mdDown>
-                        <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon/>
+                            <div className={`departments categories ${classes.linksContainer}`}>
+                                {
+                                    this.navDropdowns(departments, categories)
+                                }
                             </div>
-                            <InputBase
-                                placeholder="Search…"
-                                name="search"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                            />
-                        </div>
                         </Hidden>
                         <Hidden mdDown>
-                            <div className={classes.iconContainer} onClick={() => {this.props.showCart()}}>
+                            <div className={classes.search}>
+                                <div className={classes.searchIcon}>
+                                    <SearchIcon />
+                                </div>
+                                <InputBase
+                                    placeholder="Search…"
+                                    name="search"
+                                    classes={{
+                                        root: classes.inputRoot,
+                                        input: classes.inputInput,
+                                    }}
+                                />
+                            </div>
+                        </Hidden>
+                        <Hidden mdDown>
+                            <div className={classes.iconContainer} onClick={() => { this.props.showCart() }}>
                                 <Badge classes={{
                                     badge: classes.badge
                                 }}
                                     id="menuCartQuantity"
-                                    badgeContent={2}
+                                    badgeContent={total.Quantity}
                                     color="primary">
-                                    <img alt="Shopping Cart Icon" src="/assets/icons/shopping-cart-white.svg"/>
+                                    <img alt="Shopping Cart Icon" src="/assets/icons/shopping-cart-white.svg" />
                                 </Badge>
                             </div>
                         </Hidden>
@@ -166,13 +142,13 @@ class NavBar extends React.Component {
                             open={this.state.mobileOpen}
                             onClose={this.handleDrawerToggle.bind(this)}
                         >
-                        <Button classes={{
-                                    root: classes.button
-                                }}>
-                                    <Link to={`/department/1`} className={classes.navDrawerLink} >
-                                        Regional
+                            <Button classes={{
+                                root: classes.button
+                            }}>
+                                <Link to={`/department/1`} className={classes.navDrawerLink} >
+                                    Regional
                                     </Link>
-                                </Button>
+                            </Button>
                         </Drawer>
                     </Hidden>
                 </AppBar>
@@ -201,8 +177,18 @@ NavBar.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        showCart: alertActions.showCart
+        showCart: alertActions.showCart,
+        getAllDepartments: departmentsActions.getAllDepartments,
+        getAllCategories: categoryActions.getAllCategories,
     }, dispatch);
 }
 
-export default withStyles(styles, {withTheme: true})(connect(null, mapDispatchToProps)(NavBar));
+function mapStateToProps(state) {
+    return {
+        total: state.cart.total,
+        departments: state.departments.departments,
+        categories: state.category.categories.rows,
+    }
+}
+
+export default withStyles(styles, { withTheme: true })(connect(mapStateToProps, mapDispatchToProps)(NavBar));

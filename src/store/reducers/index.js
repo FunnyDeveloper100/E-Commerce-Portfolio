@@ -3,6 +3,9 @@ import alerts from './alerts';
 import products from './products';
 import product from './product';
 import customers from './customers';
+import cart from './cart';
+import departments from './departments';
+import category from './category';
 
 const createReducer = (asyncReducers) =>
     combineReducers({
@@ -10,6 +13,9 @@ const createReducer = (asyncReducers) =>
         customers,
         products,
         product,
+        cart,
+        departments,
+        category,
         ...asyncReducers
     });
 

@@ -8,6 +8,8 @@ import {connect} from "react-redux";
 import styles from './styles';
 import Button from "@material-ui/core/Button";
 import * as alertActions from "../../../../store/actions/alerts";
+import * as customerActions from "../../../../store/actions/customers";
+
 
 const links = [{
     title: 'Daily Deals',
@@ -26,9 +28,10 @@ class TopBar extends React.Component {
 
         const {
             classes,
+            total,
         } = this.props;
 
-        const {customer} = this.props
+        let {customer} = this.props
 
         return (
             <AppBar className={classes.topBar}>
@@ -41,7 +44,9 @@ class TopBar extends React.Component {
                             My Profile
                             </Link>
                             <span>|</span>
-                            <Link className={classes.authLink} id="btnLogout" style={{color: 'red'}}>
+                            <Link onClick={() => {
+                                this.props.logout()
+                            }} className={classes.authLink} id="btnLogout" style={{color: 'red'}}>
                              Logout
                             </Link>
                         </div>
@@ -89,13 +94,13 @@ class TopBar extends React.Component {
                         }}>
                             <Badge
                                 classes={{badge: classes.badge}}
-                                badgeContent={1}
+                                badgeContent={total.Quantity}
                                 color="primary"
                             >
                                 <img alt="Shopping Cart Icon" src="/assets/icons/shopping-cart-black.svg"/>
                             </Badge>
                         </div>
-                        <div className={classes.yourBag} style={{color: 'black'}}>Your Bag: $<span id="menuCartTotalPrice">14.99</span></div>
+                        <div className={classes.yourBag} style={{color: 'black'}}>Your Bag: {total.currencyFormat}<span id="menuCartTotalPrice">{total.Price}</span></div>
                     </div>
                 </Toolbar>
             </AppBar>
@@ -110,13 +115,16 @@ TopBar.propTypes = {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         showCart: alertActions.showCart,
-        showAuth: alertActions.showAuth
+        showAuth: alertActions.showAuth,
+        logout: customerActions.logoutCustomerAction,
     }, dispatch);
 }
 
 function mapStateToProps(state) {
     return {
-        customer: state.customers.auth.customer
+        customer: state.customers.auth.customer,
+        products: state.cart.products,
+        total: state.cart.total,
     }
 }
 

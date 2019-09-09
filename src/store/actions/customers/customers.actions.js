@@ -6,6 +6,8 @@ export const LOGIN_CUSTOMER = 'LOGIN_CUSTOMER';
 export const LOGIN_CUSTOMER_SUCCESS = 'LOGIN_CUSTOMER_SUCCESS';
 export const LOGIN_CUSTOMER_ERROR = 'LOGIN_CUSTOMER_ERROR';
 
+export const LOGOUT_CUSTOMER = 'LOGOUT_CUSTOMER';
+
 export const registerCustomerAction = (payload) => {
     return {
         type: REGISTER_CUSTOMER,
@@ -19,3 +21,9 @@ export const loginCustomerAction = (payload) => {
         payload
     }
 };
+
+export const logoutCustomerAction = () => {
+    return {
+        type: LOGOUT_CUSTOMER,
+    }
+}

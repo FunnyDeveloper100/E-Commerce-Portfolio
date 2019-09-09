@@ -6,30 +6,47 @@ import {
     REGISTER_CUSTOMER_ERROR,
     LOGIN_CUSTOMER,
     LOGIN_CUSTOMER_SUCCESS,
-    LOGIN_CUSTOMER_ERROR
+    LOGIN_CUSTOMER_ERROR,
+    LOGOUT_CUSTOMER
 }
     from "../../actions/customers";
 
 function* registerCustomer(action) {
     try {
-        const response = yield call(customerService.registerCustomerService, action.payload);
-        yield put({ type: REGISTER_CUSTOMER_SUCCESS, response });
+        const customer = yield call(customerService.registerCustomerService, action.payload);
+        
+        yield put({ type: REGISTER_CUSTOMER_SUCCESS, customer });
     } catch (error) {
         yield put({ type: REGISTER_CUSTOMER_ERROR, error });
     }
 }
 
-export function* registerSaga() {
-    yield takeLatest(REGISTER_CUSTOMER, registerCustomer)
+function* loginCustomer(action) {
+    try {
+        const customer = yield call(customerService.loginCustomerService, action.payload);
+        
+        yield put({ type: LOGIN_CUSTOMER_SUCCESS, customer });
+    } catch (error) {
+        yield put({ type: LOGIN_CUSTOMER_ERROR, error })
+    }
 }
 
-//   export function* loginSaga(payload) {
-//     try {
-//       const response = yield call(loginUserService, payload);
-//       yield [
-//         put({ type: LOGIN_CUSTOMER_SUCCESS, response })
-//       ];
-//     } catch(error) {
-//       yield put({ type: LOGIN_CUSTOMER_ERROR, error })
-//     }
-//   }
+function* logoutCustomer() {
+    try {
+        yield put({type: LOGOUT_CUSTOMER});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export function* registerSaga() {
+    yield takeLatest(REGISTER_CUSTOMER, registerCustomer);
+}
+
+export function* loginSaga() {
+    yield takeLatest(LOGIN_CUSTOMER, loginCustomer);
+}
+
+export function* logoutSaga() {
+    yield takeLatest(LOGOUT_CUSTOMER, logoutCustomer);
+}

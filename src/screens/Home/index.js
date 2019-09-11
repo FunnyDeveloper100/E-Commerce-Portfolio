@@ -29,8 +29,8 @@ import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 import Close from '@material-ui/icons/Close';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import Pagination from "material-ui-flat-pagination";
-//import Pagination from '@kevinwang0316/react-materialui-pagination';
 import * as productActions from '../../store/actions/products'
+import * as filterActions from '../../store/actions/filters'
 import styles from './styles';
 import { Container, Section } from '../../components/Layout';
 import ListProduct from '../../components/ListProduct';
@@ -39,28 +39,93 @@ import SubscribeBar from '../../components/SubscribeBar';
 import './styles.css';
 
 class Home extends Component {
-
+    
     constructor(props) {
         super(props);
         this.state = {
-            offset: 0,
-            per_page: 9,
-        };
+            color: null,
+            sizes: [],
+            price_range: [10, 30],
+            query: null,
+            isApplied: false,
+        }
     }
 
-    handleClick = (offset, page) => {
-        this.setState({offset});
-        this.props.getAllProducts({
+    handlePageButtonClick = (offset, page) => {
+        this.props.updateFilterAction({
+            offset: offset,
             page: page,
-            limit: this.state.per_page,
-            description_length: 120
+        })
+
+        if (this.props.filters.category_id) {
+            this.props.getProductsInCategory({
+                ...this.props.filters,
+                page: page
+            })
+        }
+        else if (this.props.filters.department_id) {
+            this.props.getProductsInDepartment({
+                ...this.props.filters,
+                page: page
+            })
+        } else {
+            this.props.getAllProducts({
+                ...this.props.filters,
+                page: page
+            });
+        }
+    }
+
+    handleColorRadioButton = (event) => {
+        this.setState({
+            color: event.target.value,
+        })
+    }
+
+    handleSizeCheckBox = (event) => {
+        let sizes = this.state.sizes;
+        sizes[event.target.value] = event.target.checked;
+        this.setState({
+            sizes: sizes
+        })
+    }
+
+    handlePriceSlider = (value, event) => {
+        this.setState({
+            price_range: value
+        })
+    }
+
+    handleSearchTextField = event => {
+        this.setState({
+            query: event.target.value
+        })
+    }
+
+    updateFilter = () => {
+        this.setState({
+            isApplied: true
+        }, () => {
+            this.props.updateFilterAction(this.state)
+        });
+    }
+
+    resetFilters = () => {
+        this.setState({
+            color: null,
+            sizes: [],
+            price_range: [10, 30],
+            query: null,
+            isApplied: false,
+        }, () => {
+            this.props.updateFilterAction(this.state)
         });
     }
 
     componentWillMount() {
         this.props.getAllProducts({
-            page: 1,
-            limit: this.state.per_page,
+            page: this.props.filters.page,
+            limit: this.props.filters.limit,
             description_length: 120
         });
     }
@@ -105,59 +170,73 @@ class Home extends Component {
                                             </div>
                                             <div className={classes.colorRadiosContainer}>
                                                 <Radio
+                                                    checked={this.state.color === '#6eb2fb'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#6eb2fb' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="a"
-                                                    name="radio-button-demo"
+                                                    value="#6eb2fb"
+                                                    name="filter-color-radio-button"
                                                     aria-label="A"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#00d3ca'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#00d3ca' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="b"
-                                                    name="radio-button-demo"
+                                                    value="#00d3ca"
+                                                    name="filter-color-radio-button"
                                                     aria-label="B"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#f62f5e'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#f62f5e' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="c"
-                                                    name="radio-button-demo"
+                                                    value="#f62f5e"
+                                                    name="filter-color-radio-button"
                                                     aria-label="C"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#fe5c07'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#fe5c07' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="d"
-                                                    name="radio-button-demo"
+                                                    value="#fe5c07"
+                                                    name="filter-color-radio-button"
                                                     aria-label="D"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#f8e71c'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#f8e71c' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="e"
-                                                    name="radio-button-demo"
+                                                    value="#f8e71c"
+                                                    name="filter-color-radio-button"
                                                     aria-label="E"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#7ed321'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#7ed321' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="f"
-                                                    name="radio-button-demo"
+                                                    value="#7ed321"
+                                                    name="filter-color-radio-button"
                                                     aria-label="F"
                                                 />
                                                 <Radio
+                                                    checked={this.state.color === '#9013fe'}
+                                                    onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#9013fe' }}
                                                     size="small"
                                                     icon={<FiberManualRecord />}
-                                                    value="g"
-                                                    name="radio-button-demo"
+                                                    value="#9013fe"
+                                                    name="filter-color-radio-button"
                                                     aria-label="G"
                                                 />
                                             </div>
@@ -170,26 +249,31 @@ class Home extends Component {
                                             </div>
                                             <div className={classes.sizeCheckboxes}>
                                                 <Checkbox
+                                                    onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XS</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>XS</div>}
                                                     value="XS" />
                                                 <Checkbox
+                                                    onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>S</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>S</div>}
-                                                    value="checkedA" />
+                                                    value="S" />
                                                 <Checkbox
+                                                    onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>M</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>M</div>}
                                                     value="M" />
                                                 <Checkbox
+                                                    onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>L</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>L</div>}
                                                     value="L" />
                                                 <Checkbox
+                                                    onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XL</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>XL</div>}
@@ -203,8 +287,11 @@ class Home extends Component {
                                               </span>
                                             </div>
                                             <div className={classes.sliderContainer}>
-                                                <Slider color="#f62f5e" defaultValue={[200, 385]}
-                                                    min={1}
+                                                <Slider 
+                                                    onChange={this.handlePriceSlider}
+                                                    color="#f62f5e" 
+                                                    defaultValue={[10, 30]}
+                                                    min={0}
                                                     max={500} range />
                                             </div>
                                             <div style={{
@@ -213,9 +300,9 @@ class Home extends Component {
                                                 flexDirection: "row",
                                                 height: "24px"
                                             }}>
-                                                <div className={classes.rangesText}>{`£ 375`}</div>
+                                                <div className={classes.rangesText}>{`£ ` + this.state.price_range[0]}</div>
                                                 <div style={{ flexGrow: 1 }} />
-                                                <div className={classes.rangesText}>{`£ 500`}</div>
+                                                <div className={classes.rangesText}>{`£ ` + this.state.price_range[1]}</div>
                                             </div>
                                         </div>
                                         <div className={classes.searchBlock}>
@@ -229,6 +316,7 @@ class Home extends Component {
                                                     inputProps={{
                                                         className: classes.filterSearchInput,
                                                     }}
+                                                    onChange={this.handleSearchTextField}
                                                     placeholder="Enter a keyword to search..."
                                                     margin="dense"
                                                     variant="outlined"
@@ -239,10 +327,11 @@ class Home extends Component {
                                     </div>
                                     <div className={classes.footerBlock}>
                                         <Fab color="primary" size="small" className={classes.coloredButton}
-                                            style={{ borderRadius: 24, height: 35, width: 90 }}><span
+                                            style={{ borderRadius: 24, height: 35, width: 90 }}
+                                            onClick={this.updateFilter}><span
                                                 className={classes.submitButtonText}>Apply</span></Fab>
 
-                                        <Button className={classes.clearText}>
+                                        <Button className={classes.clearText} onClick={this.resetFilters}>
                                             <Close className={classes.boldIcon} />
                                             <span>Reset</span>
                                         </Button>
@@ -252,11 +341,11 @@ class Home extends Component {
                             <div className="w-3/4">
                                 <div className="flex justify-center">
                                     <Pagination
-                                        limit={this.state.per_page}
-                                        offset={this.state.offset}
+                                        limit={this.props.filters.limit}
+                                        offset={this.props.filters.offset}
                                         total={total ? total : 0}
-                                        onClick={(event, offset, page) => this.handleClick(offset, page)}
-                                        size='large'
+                                        onClick={(event, offset, page) => this.handlePageButtonClick(offset, page)}
+                                        size='small'
                                         otherPageColor='default'
                                     />
                                 </div>
@@ -285,14 +374,18 @@ class Home extends Component {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getAllProducts: productActions.getAllProducts,
+        getProductsInCategory: productActions.getProductsInCategory,
+        getProductsInDepartment: productActions.getProductsInDepartment,
+        updateFilterAction: filterActions.updateFilters,
     }, dispatch);
 }
 
-function mapStateToProps({ products, categories, departments }) {
+function mapStateToProps({ products, categories, departments, filters }) {
     return {
         total: products.all.data.count,
         products: products.all.data.rows,
         isLoading: products.all.isLoading,
+        filters: filters,
     }
 }
 

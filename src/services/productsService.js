@@ -16,7 +16,7 @@ class productsService extends EventEmitter {
     };
 
 
-    getAllProducts = ({page, limit, description_length }) => {
+    getAllProducts = ({filters, page, limit, description_length }) => {
         return new Promise((resolve, reject) => {
             axios.get(systemConfig.serverBaseUrl + '/products', {
                 params: {
@@ -25,7 +25,14 @@ class productsService extends EventEmitter {
                     description_length
                 }
             }).then(response => {
-                resolve(response.data)
+                let { data } = response
+
+                // if (!!filters && filters.length > 0) {
+                //     data.rows = data.rows.filter(p => 
+                //         filters.find(f => p.))
+                // }
+
+                resolve(data)
             }).catch((error) => {
                 reject(error.response);
             });
@@ -50,9 +57,15 @@ class productsService extends EventEmitter {
         });
     };
 
-    getProductsInCategory = ({ category_id }) => {
+    getProductsInCategory = ({category_id, filters, page, limit, description_length }) => {
         return new Promise((resolve, reject) => {
-            axios.get(systemConfig.serverBaseUrl + `/products/inCategory/${category_id}`).then(response => {
+            axios.get(systemConfig.serverBaseUrl + `/products/inCategory/${category_id}`, {
+                params: {
+                    page,
+                    limit,
+                    description_length
+                }
+            }).then(response => {
                 resolve(response.data)
             }).catch((error) => {
                 reject(error.response);
@@ -60,9 +73,15 @@ class productsService extends EventEmitter {
         });
     };
 
-    getProductsInDepartment = ({ department_id }) => {
+    getProductsInDepartment = ({department_id , filters, page, limit, description_length }) => {
         return new Promise((resolve, reject) => {
-            axios.get(systemConfig.serverBaseUrl + `/products/inDepartment/${department_id}`).then(response => {
+            axios.get(systemConfig.serverBaseUrl + `/products/inDepartment/${department_id}`, {
+                params: {
+                    page,
+                    limit,
+                    description_length
+                }
+            }).then(response => {
                 resolve(response.data)
             }).catch((error) => {
                 reject(error.response);

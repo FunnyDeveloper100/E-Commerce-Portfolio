@@ -1,7 +1,16 @@
 import * as filtersActions from '../../actions/filters';
 
 const initialState = {
-    items: []
+    colors: [],
+    size: [],
+    price_range: [],
+    query: null,
+    department_id: null,
+    category_id: null,
+    page: 1,
+    offset: 0,
+    limit: 9,
+    description_length: 120,
 };
 
 const filters = function (state = initialState, action) {
@@ -10,7 +19,7 @@ const filters = function (state = initialState, action) {
             {
                 return {
                     ...state,
-                    items: action.payload
+                    ...action.payload,
                 };
             }
         default:

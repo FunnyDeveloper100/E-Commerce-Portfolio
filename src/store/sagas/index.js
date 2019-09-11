@@ -5,6 +5,7 @@ import productSaga from './product';
 import cartSaga from './cart';
 import departmentsSaga from './departments';
 import cartegorySaga from './category';
+import updateFilterSaga from './filter';
 
 export default function* rootSaga() {
     yield all([
@@ -14,5 +15,6 @@ export default function* rootSaga() {
         cartSaga(),
         departmentsSaga(),
         cartegorySaga(),
+        updateFilterSaga(),
     ]);
 }

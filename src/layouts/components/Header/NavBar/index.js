@@ -13,6 +13,8 @@ import styles from './styles';
 import * as alertActions from "../../../../store/actions/alerts";
 import * as departmentsActions from "../../../../store/actions/departments";
 import * as categoryActions from "../../../../store/actions/category";
+import * as productActions from "../../../../store/actions/products";
+import * as filterActions from '../../../../store/actions/filters'
 import './style.css';
 
 class NavBar extends React.Component {
@@ -26,6 +28,47 @@ class NavBar extends React.Component {
 
     handleDrawerToggle() {
         this.setState({ mobileOpen: !this.state.mobileOpen });
+    }
+
+    handleCategorySelect = (eventKey) => {
+        this.props.updateFilterAction({
+            category_id: eventKey,
+            department_id: null,
+            page: 1,
+            offset: 0,
+            limit: 9
+        })
+
+        this.props.getProductsInCategory({
+            category_id: eventKey,
+            page: 1,
+            limit: 9,
+            description_length: 120
+        });
+    }
+
+    handleDepartmentSelect = (event) => {
+        const name = event.target.text;
+        const department = this.props.departments.find(department => {
+            return department.name == name
+        })
+
+        if (!department)
+            return 0;
+        this.props.updateFilterAction({
+            department_id: department.department_id,
+            category_id: null,
+            page: 1,
+            offset: 0,
+            limit: 9
+        })
+
+        this.props.getProductsInDepartment({
+            department_id: department.department_id,
+            page: 1,
+            limit: 9,
+            description_length: 120
+        });
     }
 
     componentDidMount() {
@@ -50,20 +93,23 @@ class NavBar extends React.Component {
                     key={index}
                     title={department.name}
                     className="department navDropdown"
+                    onClick={this.handleDepartmentSelect}
                 >
                     {
                         categories &&
-                            categories.map((category, index) => {
-                                if (department.department_id === category.department_id) {
-                                    return <NavDropdown.Item
-                                        key={index}
-                                        onClick={() => { }}
-                                        className="category"
-                                    >
-                                        {category.name}
-                                    </NavDropdown.Item>
-                                }
-                            })
+                        categories.map((category, index) => {
+                            if (department.department_id === category.department_id) {
+                                return <NavDropdown.Item
+                                    key={index}
+                                    className="category"
+                                    eventKey={category.category_id}
+                                    value={category.id}
+                                    onSelect={this.handleCategorySelect}
+                                >
+                                    {category.name}
+                                </NavDropdown.Item>
+                            }
+                        })
                     }
                 </NavDropdown>
             });
@@ -180,8 +226,9 @@ NavBar.propTypes = {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         showCart: alertActions.showCart,
-        getAllDepartments: departmentsActions.getAllDepartments,
-        getAllCategories: categoryActions.getAllCategories,
+        getProductsInCategory: productActions.getProductsInCategory,
+        getProductsInDepartment: productActions.getProductsInDepartment,
+        updateFilterAction: filterActions.updateFilters,
     }, dispatch);
 }
 

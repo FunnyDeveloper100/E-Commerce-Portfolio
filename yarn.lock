@@ -776,10 +776,17 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-transform-typescript" "^7.3.2"
 
-"@babel/runtime@7.5.5", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5":
+"@babel/runtime@7.5.5", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.5.tgz#74fba56d35efbeca444091c7850ccd494fd2f132"
   integrity sha512-28QvEGyQyNkB0/m2B4FU7IEZGK2NUrcMtT6BZEFALTguLk+AUT6ofsHtPk5QyjAdUkpMJ+/Em+quwz4HOt30AQ==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1":
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.0.tgz#4fc1d642a9fd0299754e8b5de62c631cf5568205"
+  integrity sha512-89eSBLJsxNxOERC0Op4vd+0Bqm6wRMqMbFtV3i0/fbaWw/mJ8Q3eBvgX0G4SyrOOLCtbu98HspF8o09MRT+KzQ==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -1035,6 +1042,11 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
+
+"@kevinwang0316/react-materialui-pagination@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@kevinwang0316/react-materialui-pagination/-/react-materialui-pagination-1.1.4.tgz#e8e69c8042de93f27e1714a26feb58f1ebf267ac"
+  integrity sha512-SpFphVIqApomv2+6VIKlRR/0EBihzQMO1eoLLjiVQLwK0mm0KRj02OCW41Q6qHC/wOu6gWoakFXbR8L87TF4Xg==
 
 "@material-ui/core@^3.9.3":
   version "3.9.3"
@@ -6528,6 +6540,13 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+material-ui-flat-pagination@^3.0.0:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/material-ui-flat-pagination/-/material-ui-flat-pagination-3.2.1.tgz#c8c0fefd319b19a227684c7d8cb37a6b91053e6c"
+  integrity sha512-8O84mVUh7kPx4nRAcoUptf0zrufoxLUDZAsRv/4D2W3+bWEQRXGNJhoDx4cv5+/q+vnmfWznZI+st75oFiLoGw==
+  dependencies:
+    classnames "^2.2.6"
 
 material-ui-slider@^3.0.0:
   version "3.0.8"

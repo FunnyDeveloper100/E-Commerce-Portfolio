@@ -5,3 +5,4 @@ export * from './product';
 export * from './cart';
 export * from './departments';
 export * from './category';
+export * from './filters';

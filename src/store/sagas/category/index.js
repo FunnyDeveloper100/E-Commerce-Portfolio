@@ -45,7 +45,7 @@ function* getCategoriesInProduct(action) {
 }
 
 
-export default function* departmentsSaga() {
+export default function* cartegorySaga() {
     yield all([
         getAllCategoriesSaga(),
         getSingleCategorySaga(),

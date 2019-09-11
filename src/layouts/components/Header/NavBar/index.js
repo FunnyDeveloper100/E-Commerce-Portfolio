@@ -45,16 +45,18 @@ class NavBar extends React.Component {
 
     navDropdowns = (departments, categories) => {
         if (departments) {
-            return departments.map((department) => {
+            return departments.map((department, index) => {
                 return <NavDropdown
+                    key={index}
                     title={department.name}
                     className="department navDropdown"
                 >
                     {
                         categories &&
-                            categories.map(category => {
-                                if (department.department_id == category.department_id) {
+                            categories.map((category, index) => {
+                                if (department.department_id === category.department_id) {
                                     return <NavDropdown.Item
+                                        key={index}
                                         onClick={() => { }}
                                         className="category"
                                     >

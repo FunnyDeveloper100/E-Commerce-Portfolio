@@ -1,10 +1,7 @@
 import * as filtersActions from '../../actions/filters';
 
 const initialState = {
-    colors: [],
-    size: [],
-    price_range: [],
-    query: null,
+    filters: null,
     department_id: null,
     category_id: null,
     page: 1,

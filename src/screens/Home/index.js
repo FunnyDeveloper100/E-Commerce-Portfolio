@@ -103,11 +103,7 @@ class Home extends Component {
     }
 
     updateFilter = () => {
-        this.setState({
-            isApplied: true
-        }, () => {
-            this.props.updateFilterAction(this.state)
-        });
+        this.props.updateFilterAction({filters: this.state})
     }
 
     resetFilters = () => {
@@ -116,10 +112,8 @@ class Home extends Component {
             sizes: [],
             price_range: [10, 30],
             query: null,
-            isApplied: false,
-        }, () => {
-            this.props.updateFilterAction(this.state)
-        });
+        })
+        this.props.updateFilterAction({filters: null})
     }
 
     componentWillMount() {

@@ -18,6 +18,17 @@ class customerService extends EventEmitter {
     };
 
 
+    getCustomerByToken = (request) => {
+        setAuthToken(request);
+        return new Promise((resolve, reject) => {
+            axios.get(systemConfig.serverBaseUrl + '/customer').then(response => {
+                resolve(response.data);
+            }).catch((error) => {
+                reject(error.response);
+            });
+        });
+    }
+
     registerCustomerService = (request) => {
         return new Promise((resolve, reject) => {
             axios.post(systemConfig.serverBaseUrl + '/customers', request).then(response => {

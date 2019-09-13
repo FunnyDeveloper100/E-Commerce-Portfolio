@@ -15,6 +15,12 @@ class productsService extends EventEmitter {
         axios.defaults.headers.common['Accept'] = 'application/json';
     };
 
+    checkProduct = (p, filters) => {
+        const price = p.discounted_price ? p.discounted_price : p.price
+        if (price > filters.price_range[1] || price < filters.price_range[0]) 
+            return false;
+        return true
+    }
 
     getAllProducts = ({filters, page, limit, description_length }) => {
         return new Promise((resolve, reject) => {
@@ -25,14 +31,16 @@ class productsService extends EventEmitter {
                     description_length
                 }
             }).then(response => {
-                let { data } = response
+                let { data } = response;
 
-                // if (!!filters && filters.length > 0) {
-                //     data.rows = data.rows.filter(p => 
-                //         filters.find(f => p.))
-                // }
+                if (!!filters) {
+                    data.rows = data.rows.filter(p => {
+                        return this.checkProduct(p, filters);
+                    });
+                    data.count = data.rows.length;
+                }
 
-                resolve(data)
+                resolve(data);
             }).catch((error) => {
                 reject(error.response);
             });
@@ -50,7 +58,7 @@ class productsService extends EventEmitter {
                     description_length
                 }
             }).then(response => {
-                resolve(response.data)
+                resolve(response.data);
             }).catch((error) => {
                 reject(error.response);
             });
@@ -66,7 +74,14 @@ class productsService extends EventEmitter {
                     description_length
                 }
             }).then(response => {
-                resolve(response.data)
+                let { data } = response;
+                if (!!filters) {
+                    data.rows = data.rows.filter(p => {
+                        return this.checkProduct(p, filters);
+                    });
+                    data.count = data.rows.length;
+                }
+                resolve(data)
             }).catch((error) => {
                 reject(error.response);
             });
@@ -82,7 +97,14 @@ class productsService extends EventEmitter {
                     description_length
                 }
             }).then(response => {
-                resolve(response.data)
+                let { data } = response;
+                if (!!filters) {
+                    data.rows = data.rows.filter(p => {
+                        return this.checkProduct(p, filters)
+                    });
+                    data.count = data.rows.length;
+                }
+                resolve(data)
             }).catch((error) => {
                 reject(error.response);
             });

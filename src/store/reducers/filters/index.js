@@ -8,6 +8,7 @@ const initialState = {
     offset: 0,
     limit: 9,
     description_length: 120,
+    query_string: null,
 };
 
 const filters = function (state = initialState, action) {

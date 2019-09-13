@@ -116,7 +116,13 @@ const styles = theme => ({
         left: '50%',
         marginTop: -12,
         marginLeft: -12,
-    }
+    },
+    label: {
+        textTransform: 'none',
+        fontFamily: "Montserrat",
+        fontSize: "12px",
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;

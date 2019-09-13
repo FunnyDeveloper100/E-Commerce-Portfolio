@@ -16,7 +16,7 @@
 
   NB: YOU CAN STYLE AND CUSTOMISE THIS PAGE, BUT YOU HAVE TO USE OUR DEFAULT CLASSNAME, IDS AND HTML INPUT NAMES
 */
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {
     withStyles,
     Radio,
@@ -24,28 +24,47 @@ import {
     Fab, CircularProgress, Hidden, Link
 } from '@material-ui/core';
 import withWidth from '@material-ui/core/withWidth';
-import {withRouter} from 'react-router-dom';
-import {bindActionCreators} from 'redux';
+import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import AddIcon from '@material-ui/icons/Add';
 import SubtractIcon from '@material-ui/icons/Remove';
 import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 import StarRatings from 'react-star-ratings';
 import classNames from "classnames";
-import {Carousel} from 'react-responsive-carousel';
+import { Carousel } from 'react-responsive-carousel';
 import systemConfig from '../../config/system';
 import * as productActions from '../../store/actions/product';
 import * as alertActions from '../../store/actions/alerts';
 import styles from './styles';
-import {Container, Section} from '../../components/Layout';
+import { Container, Section } from '../../components/Layout';
 import Review from '../../components/Review';
 import ReviewForm from './ReviewForm';
 
 
 class Product extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            quantity: 1,
+        }
+    }
+
+    substractQuantity = () => {
+        this.setState(prevState => ({
+            quantity: prevState.quantity > 1 ? prevState.quantity - 1 : 1
+        }))
+    }
+
+    addQuantity = () => {
+        this.setState(prevState => ({
+            quantity: prevState.quantity + 1
+        }))
+    }
 
     componentWillMount() {
-        const {match: {params}} = this.props;
+        const { match: { params } } = this.props;
         this.props.getSingleProduct({
             product_id: params.id
         });
@@ -55,23 +74,36 @@ class Product extends Component {
         this.props.getProductLocations({
             product_id: params.id
         });
+        this.props.getProductReviews({
+            product_id: params.id
+        })
     }
 
+    reviewsList = (reviews) => {
+        return reviews.map((r, index) => {
+            return <Review
+                key={index}
+                rating={r.rating}
+                name={r.name}
+                review={r.name}
+            />
+        });
+    }
 
     render() {
-        const {classes, product, loading, locations, locationsLoading, match: {params}} = this.props;
+        const { classes, product, loading, locations, locationsLoading, reviews, reviewsLoading, match: { params } } = this.props;
 
-        const isLoading = loading || !product.image || locationsLoading
+        const isLoading = loading || !product.image || locationsLoading || reviewsLoading;
         const isDiscounted = parseFloat(product.discounted_price) > 0;
 
         return (
             <div className={classes.root}>
                 <Container className="product-details">
                     {isLoading ? <Section>
-                            <div className="flex flex-wrap shadow flex justify-center py-24 bg-white">
-                                <CircularProgress size={40} color="primary"/>
-                            </div>
-                        </Section> :
+                        <div className="flex flex-wrap shadow flex justify-center py-24 bg-white">
+                            <CircularProgress size={40} color="primary" />
+                        </div>
+                    </Section> :
                         <div>
                             <Section>
                                 <div className="flex flex-wrap shadow bg-white">
@@ -79,22 +111,22 @@ class Product extends Component {
                                         className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 flex justify-center align-middle pt-10">
                                         <Carousel showArrows={true} showIndicators={false} showStatus={false}>
                                             <div className={classes.carouselImageContainer}>
-                                                <img src={`${systemConfig.imageBaseUrl}${product.image}`} alt="Product"/>
+                                                <img src={`${systemConfig.imageBaseUrl}${product.image}`} alt="Product" />
                                             </div>
                                             <div className={classes.carouselImageContainer}>
-                                                <img src={`${systemConfig.imageBaseUrl}${product.image_2}`} alt="Product"/>
+                                                <img src={`${systemConfig.imageBaseUrl}${product.image_2}`} alt="Product" />
                                             </div>
                                         </Carousel>
                                     </div>
                                     <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 p-10">
                                         <div className={`w-full h-8 ${classes.breadcrumbsText}`}>
-                                            Home <span className="ml-4"/> • <span
-                                            className="ml-4"/> {locations[0].department_name} <span
-                                            className="ml-4"/> • <span className="ml-4"/> {locations[0].category_name}
+                                            Home <span className="ml-4" /> • <span
+                                                className="ml-4" /> {locations[0].department_name} <span
+                                                className="ml-4" /> • <span className="ml-4" /> {locations[0].category_name}
                                         </div>
                                         <div className="w-full h-8 mt-2">
                                             <StarRatings
-                                                rating={3}
+                                                rating={reviews ? reviews.rating : 0}
                                                 starRatedColor="#ffc94f"
                                                 starEmptyColor="#eeeeee"
                                                 starHoverColor="#ffc94f"
@@ -105,17 +137,17 @@ class Product extends Component {
                                             />
                                         </div>
                                         <div className="w-full h-8">
-                                    <span className={`product-details-title ${classes.productTitleText}`}>
-                                        {product.name}
-                                    </span>
+                                            <span className={`product-details-title ${classes.productTitleText}`}>
+                                                {product.name}
+                                            </span>
                                         </div>
                                         <div className="w-full mt-4">
-                                     <span className={classes.productPrice}>
-                                        <span className={classNames({
-                                            [classes.strikeThrough]: isDiscounted
-                                        })}>£ {product.price}</span>{isDiscounted &&
-                                     <span> | £ {product.discounted_price}</span>}
-                                </span>
+                                            <span className={classes.productPrice}>
+                                                <span className={classNames({
+                                                    [classes.strikeThrough]: isDiscounted
+                                                })}>£ {product.price}</span>{isDiscounted &&
+                                                    <span> | £ {product.discounted_price}</span>}
+                                            </span>
                                         </div>
                                         <div className="w-full my-8">
                                             <div className="w-full mb-2">
@@ -123,63 +155,63 @@ class Product extends Component {
                                             </div>
                                             <div>
                                                 <Radio
-                                                    style={{padding: 2, color: '#6eb2fb'}}
+                                                    style={{ padding: 2, color: '#6eb2fb' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="blue"
                                                     name="radio-button-demo"
                                                     aria-label="blue"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#00d3ca'}}
+                                                    style={{ padding: 2, color: '#00d3ca' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="cyan"
                                                     name="radio-button-demo"
                                                     aria-label="cyan"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#f62f5e'}}
+                                                    style={{ padding: 2, color: '#f62f5e' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="red"
                                                     name="radio-button-demo"
                                                     aria-label="red"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#fe5c07'}}
+                                                    style={{ padding: 2, color: '#fe5c07' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="orange"
                                                     name="radio-button-demo"
                                                     aria-label="orange"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#f8e71c'}}
+                                                    style={{ padding: 2, color: '#f8e71c' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="yellow"
                                                     name="radio-button-demo"
                                                     aria-label="yellow"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#7ed321'}}
+                                                    style={{ padding: 2, color: '#7ed321' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="green"
                                                     name="radio-button-demo"
                                                     aria-label="green"
                                                     className="product-details-color"
                                                 />
                                                 <Radio
-                                                    style={{padding: 2, color: '#9013fe'}}
+                                                    style={{ padding: 2, color: '#9013fe' }}
                                                     size="small"
-                                                    icon={<FiberManualRecord/>}
+                                                    icon={<FiberManualRecord />}
                                                     value="purple"
                                                     name="radio-button-demo"
                                                     aria-label="purple"
@@ -193,83 +225,104 @@ class Product extends Component {
                                             </div>
                                             <div>
                                                 <Checkbox
-                                                    style={{padding: 0}}
+                                                    style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XS</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>XS</div>}
                                                     className="product-details-size"
-                                                    value="XS"/>
+                                                    value="XS" />
                                                 <Checkbox
-                                                    style={{padding: 0}}
+                                                    style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>S</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>S</div>}
                                                     className="product-details-size"
-                                                    value="checkedA"/>
+                                                    value="checkedA" />
                                                 <Checkbox
-                                                    style={{padding: 0}}
+                                                    style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>M</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>M</div>}
                                                     className="product-details-size"
-                                                    value="M"/>
+                                                    value="M" />
                                                 <Checkbox
-                                                    style={{padding: 0}}
+                                                    style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>L</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>L</div>}
                                                     className="product-details-size"
-                                                    value="L"/>
+                                                    value="L" />
                                                 <Checkbox
-                                                    style={{padding: 0}}
+                                                    style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XL</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>XL</div>}
                                                     className="product-details-size"
-                                                    value="XL"/>
+                                                    value="XL" />
+                                                <Checkbox
+                                                    style={{ padding: 0 }}
+                                                    checkedIcon={<div className={classes.sizeCheckboxChecked}>XXL</div>}
+                                                    icon={<div className={classes.sizeCheckboxUnchecked}>XXL</div>}
+                                                    className="product-details-size"
+                                                    value="XXL" />
                                             </div>
                                         </div>
                                         <div className="w-full my-8 flex flex-row">
                                             <Fab size="small" aria-label="Subtract" className={classes.addRemoveIcon}
-                                                 >
-                                                <SubtractIcon/>
+                                            >
+                                                <SubtractIcon
+                                                    onClick={this.substractQuantity}
+                                                />
                                             </Fab>
 
                                             <div
-                                                className="shadow appearance-none border rounded w-16 text-gray-700 rounded-full text-center mx-2">
-                                                <span className={classes.addRemoveText} name="product-details-quantity">2</span>
+                                                className="shadow appearance-none border w-12 text-gray-700 rounded-full text-center mx-2">
+                                                <span className={classes.addRemoveText} name="product-details-quantity">{this.state.quantity}</span>
                                             </div>
 
                                             <Fab size="small" aria-label="Add" className={`increase-quantity ${classes.addRemoveIcon}`}
                                             >
-                                                <AddIcon />
+                                                <AddIcon
+                                                    onClick={this.addQuantity}
+                                                />
                                             </Fab>
                                         </div>
                                         <div className="w-full my-8 flex flex-row">
                                             <div className="relative">
-                                            <Fab color="primary" size="large" id="btnCart"
-                                                 style={{borderRadius: 60, height: 60, width: 220}}>
-                                                <span className={classes.submitButtonText}>Add to Cart</span></Fab>
+                                                <Fab color="primary" size="large" id="btnCart"
+                                                    style={{ borderRadius: 60, height: 60, width: 220 }}>
+                                                    <span className={classes.submitButtonText}>Add to Cart</span></Fab>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </Section>
-                            <div>
-                                <Hidden mdDown>
-                                    <Section>
-                                        <div className="flex flex-wrap px-32">
+
+                                <div>
+                                    <Hidden >
+                                        <div className="flex flex-wrap px-32 bg-white">
                                             <div className="w-full flex">
-                                            <span className={classes.reviewTitleText}>
-                                                Product Reviews
+                                                <span className={classes.reviewTitleText}>
+                                                    Product Reviews
                                             </span>
                                             </div>
-                                                <Review rating={5} name="Peter Test" review="Test Review 1" />
-                                                <Review rating={3} name="Celestine Test" review="Test Review 2" />
+                                            {
+                                                this.reviewsList(reviews)
+                                            }
                                         </div>
-                                    </Section>
-                                </Hidden>
-                                <ReviewForm productId={params.id} />
-                            </div>
-                                <div className="w-full flex justify-center align-middle py-8" >
-                                    <Link onClick={() => {this.props.showAuth(false)}} color={'primary'} style={{cursor: "pointer", color: 'red'}}>Log In</Link> <span className="ml-2">to Add a Review.</span>
+                                    </Hidden>
+                                    <Hidden >
+                                        <div className="flex flex-wrap px-32 pt-4 bg-white">
+                                            <div className="w-full flex">
+                                                <span className={classes.reviewTitleText}>
+                                                    Add a review
+                                                </span>
+                                            </div>
+                                            <ReviewForm productId={params.id} />
+                                        </div>
+
+                                    </Hidden>
                                 </div>
-                        </div>}
+                                <div className="w-full flex justify-center align-middle py-8" >
+                                    <Link onClick={() => { this.props.showAuth(false) }} color={'primary'} style={{ cursor: "pointer", color: 'red' }}>Log In</Link> <span className="ml-2">to Add a Review.</span>
+                                </div>
+                            </Section>
+                        </div>
+                    }
                 </Container>
             </div>
         )
@@ -281,17 +334,20 @@ function mapDispatchToProps(dispatch) {
         getSingleProduct: productActions.getSingleProduct,
         getProductDetails: productActions.getProductDetails,
         getProductLocations: productActions.getProductLocations,
+        getProductReviews: productActions.getProductReviews,
         showAuth: alertActions.showAuth
     }, dispatch);
 }
 
-function mapStateToProps({product, cart, auth}) {
+function mapStateToProps({ product, cart, auth }) {
     return {
         product: product.item.data,
+        loading: product.item.isLoading,
         locations: product.locations.data,
         locationsLoading: product.locations.isLoading,
-        loading: product.item.isLoading,
+        reviews: product.reviews.data,
+        reviewsLoading: product.reviews.isLoading,
     }
 }
 
-export default withWidth()(withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Product))));
+export default withWidth()(withStyles(styles, { withTheme: true })(withRouter(connect(mapStateToProps, mapDispatchToProps)(Product))));

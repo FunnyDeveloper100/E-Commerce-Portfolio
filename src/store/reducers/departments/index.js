@@ -6,14 +6,14 @@ const initialState = {
 
 const departments = function (state = initialState, action) {
     switch (action.type) {
-        case departmentsActions.GET_ALL_DEPARTMENTS:
+        case departmentsActions.GET_ALL_DEPARTMENTS_SUCCESS:
             {
                 return {
                     ...state,
                     departments: action.departments
                 };
             }
-        case departmentsActions.GET_DEPARTMENT:
+        case departmentsActions.GET_DEPARTMENT_SUCCESS:
             {
                 return {
                     ...state,

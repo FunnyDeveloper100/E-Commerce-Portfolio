@@ -6,16 +6,16 @@ const initialState = {
     error: false
 };
 
-const productDetailsReducer = function (state = initialState, action) {
+const productReviewsReducer = function (state = initialState, action) {
     switch (action.type) {
-        case Actions.GET_PRODUCT_DETAILS: {
+        case Actions.GET_PRODUCT_REVIEWS: {
             return {
                 ...state,
                 isLoading: true,
                 error: false
             };
         }
-        case Actions.GET_PRODUCT_DETAILS_SUCCESS: {
+        case Actions.GET_PRODUCT_REVIEWS_SUCCESS: {
             return {
                 ...state,
                 data: action.payload,
@@ -23,7 +23,7 @@ const productDetailsReducer = function (state = initialState, action) {
                 error: false
             };
         }
-        case Actions.GET_PRODUCT_DETAILS_ERROR: {
+        case Actions.GET_PRODUCT_REVIEWS_ERROR: {
             return {
                 ...state,
                 isLoading: false,
@@ -36,4 +36,4 @@ const productDetailsReducer = function (state = initialState, action) {
     }
 };
 
-export default productDetailsReducer;
+export default productReviewsReducer;

@@ -12,17 +12,29 @@ import {
     GET_PRODUCTS_IN_DEPARTMENT,
     GET_PRODUCTS_IN_DEPARTMENT_SUCCESS,
     GET_PRODUCTS_IN_DEPARTMENT_ERROR,
+
+    GET_PRODUCTS_SEARCH,
+    GET_PRODUCTS_SEARCH_SUCCESS,
+    GET_PRODUCTS_SEARCH_ERROR,
 }
     from "../../actions/products";
 
 function* getAllProductsSaga(action) {
     try {
-        const data = yield call(productsService.getAllProducts, action.payload);
-        yield put({
-            type: GET_ALL_PRODUCTS_SUCCESS,
-            payload: data
-        });
-
+        const {category_id, department_id, query_string} = action.payload;
+        if (department_id) {
+            yield put({type: GET_PRODUCTS_IN_DEPARTMENT, payload: action.payload})
+        } else if (category_id) {
+            yield put({type: GET_PRODUCTS_IN_CATEGORY, payload: action.payload})
+        } else if (query_string) {
+            yield put({type: GET_PRODUCTS_SEARCH, payload: action.payload})
+        } else {
+            const data = yield call(productsService.getAllProducts, action.payload);
+            yield put({
+                type: GET_ALL_PRODUCTS_SUCCESS,
+                payload: data
+            });
+        }
     } catch (error) {
         yield put({
             type: GET_ALL_PRODUCTS_ERROR, payload: error
@@ -60,6 +72,21 @@ function* getProductsInDepartmentSaga(action) {
     }
 }
 
+function* getProductsSearchSaga(action) {
+    try {
+        const data = yield call(productsService.searchProducts, action.payload);
+        yield put({
+            type: GET_PRODUCTS_SEARCH_SUCCESS,
+            payload: data
+        });
+
+    } catch (error) {
+        yield put({
+            type: GET_PRODUCTS_SEARCH_ERROR, payload: error
+        });
+    }
+}
+
 export function* getAllProductsWatcher() {
     yield takeLatest(GET_ALL_PRODUCTS, getAllProductsSaga);
 }
@@ -70,4 +97,8 @@ export function* getProductsInCategory() {
 
 export function* getProductsInDepartment() {
     yield takeLatest(GET_PRODUCTS_IN_DEPARTMENT, getProductsInDepartmentSaga);
+}
+
+export function* getProductsSearch() {
+    yield takeLatest(GET_PRODUCTS_SEARCH, getProductsSearchSaga);
 }

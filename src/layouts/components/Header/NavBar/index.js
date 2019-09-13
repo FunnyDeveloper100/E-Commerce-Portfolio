@@ -26,6 +26,11 @@ class NavBar extends React.Component {
         }
     }
 
+    componentWillMount() {
+        this.props.getAllCategories();
+        this.props.getAllDepartments();
+    }
+    
     handleDrawerToggle() {
         this.setState({ mobileOpen: !this.state.mobileOpen });
     }
@@ -33,13 +38,13 @@ class NavBar extends React.Component {
     handleCategorySelect = (eventKey) => {
         this.props.updateFilterAction({
             category_id: eventKey,
-            department_id: null,
             page: 1,
             offset: 0,
             limit: 9
         })
 
         this.props.getProductsInCategory({
+            ...this.props.filters,
             category_id: eventKey,
             page: 1,
             limit: 9,
@@ -64,11 +69,32 @@ class NavBar extends React.Component {
         })
 
         this.props.getProductsInDepartment({
+            ...this.props.filters,
             department_id: department.department_id,
             page: 1,
             limit: 9,
             description_length: 120
         });
+    }
+
+    handleSearch = (event) => {
+        const query_string = event.target.value ? event.target.value : null;
+        this.props.updateFilterAction({
+            department_id: null,
+            category_id: null,
+            query_string: query_string,
+            page: 1,
+            offset: 0,
+            limit: 9
+        })
+        this.props.getAllProducts({
+            department_id: null,
+            category_id: null,
+            query_string: query_string,
+            page: 1,
+            offset: 0,
+            limit: 9
+        })
     }
 
     componentDidMount() {
@@ -151,6 +177,7 @@ class NavBar extends React.Component {
                                     <SearchIcon />
                                 </div>
                                 <InputBase
+                                    onChange={this.handleSearch}
                                     placeholder="Search…"
                                     name="search"
                                     classes={{
@@ -226,17 +253,22 @@ NavBar.propTypes = {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         showCart: alertActions.showCart,
+        getAllProducts: productActions.getAllProducts,
+        getAllCategories: categoryActions.getAllCategories,
+        getAllDepartments: departmentsActions.getAllDepartments,
         getProductsInCategory: productActions.getProductsInCategory,
         getProductsInDepartment: productActions.getProductsInDepartment,
+        getProductsSearch: productActions.getProductsSearch,
         updateFilterAction: filterActions.updateFilters,
     }, dispatch);
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({cart, departments, category, filters}) {
     return {
-        total: state.cart.total,
-        departments: state.departments.departments,
-        categories: state.category.categories.rows,
+        total: cart.total,
+        departments: departments.departments,
+        categories: category.categories.rows,
+        filters: filters,
     }
 }
 

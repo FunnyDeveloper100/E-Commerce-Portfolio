@@ -3,6 +3,9 @@ import {withRouter} from 'react-router-dom';
 import {renderRoutes} from 'react-router-config'
 import {withStyles} from '@material-ui/core';
 import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import jwt_decode from 'jwt-decode';
+import * as customersActions from '../../store/actions/customers';
 import AuthDialog from "../components/AuthDialog";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -37,6 +40,14 @@ const dashboardRoutes = [];
 
 class Layout extends React.Component {
 
+    componentWillMount() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            this.props.setCustomerFromTokenAction(token);
+        }
+    }
+    
+
     render() {
         const {children } = this.props;
 
@@ -63,11 +74,17 @@ class Layout extends React.Component {
     };
 }
 
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
+        setCustomerFromTokenAction: customersActions.setCustomerFromTokenAction,
+    }, dispatch);
+}
 
-function mapStateToProps({products}) {
+function mapStateToProps({products, customers}) {
     return {
         products: products.all.data.rows,
+        auth: customers.auth,
     }
 }
 
-export default withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps)(Layout)));
+export default withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Layout)));

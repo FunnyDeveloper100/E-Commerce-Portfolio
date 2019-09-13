@@ -43,12 +43,17 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            color: null,
-            sizes: [],
-            price_range: [10, 30],
-            query: null,
-            isApplied: false,
+            filters: {
+                color: null,
+                sizes: {},
+                price_range: [10, 30],
+            },
+            query_string: null,
         }
+    }
+
+    loadProducts = (payload) => {
+        this.props.getAllProducts(payload);
     }
 
     handlePageButtonClick = (offset, page) => {
@@ -57,63 +62,80 @@ class Home extends Component {
             page: page,
         })
 
-        if (this.props.filters.category_id) {
-            this.props.getProductsInCategory({
-                ...this.props.filters,
-                page: page
-            })
-        }
-        else if (this.props.filters.department_id) {
-            this.props.getProductsInDepartment({
-                ...this.props.filters,
-                page: page
-            })
-        } else {
-            this.props.getAllProducts({
-                ...this.props.filters,
-                page: page
-            });
-        }
+        this.loadProducts({
+            ...this.props.filters,
+            page: page
+        });
     }
 
     handleColorRadioButton = (event) => {
-        this.setState({
-            color: event.target.value,
-        })
+        const color = event.target.value;
+        this.setState(prevState => ({
+            filters: {
+                ...prevState.filters,
+                color: color,
+            }
+        }))
     }
 
     handleSizeCheckBox = (event) => {
-        let sizes = this.state.sizes;
+        let sizes = this.state.filters.sizes;
         sizes[event.target.value] = event.target.checked;
-        this.setState({
-            sizes: sizes
-        })
+        this.setState(prevState => ({
+            filters: {
+                ...prevState.filters,
+                sizes: sizes
+            }
+        }))
     }
 
     handlePriceSlider = (value, event) => {
-        this.setState({
-            price_range: value
-        })
+        this.setState(prevState => ({
+            filters: {
+                ...prevState.filters,
+                price_range: value
+            }
+        }))
     }
 
     handleSearchTextField = event => {
         this.setState({
-            query: event.target.value
+            query_string: event.target.value
         })
     }
 
     updateFilter = () => {
-        this.props.updateFilterAction({filters: this.state})
+        this.props.updateFilterAction({
+                filters: this.state.filters, 
+                query_string: this.state.query_string,
+                page: 1
+            }
+        )
+        this.loadProducts({
+            ...this.props.filters,
+            filters: this.state.filters,
+            query_string: this.state.query_string,
+            page: 1
+        });
     }
 
     resetFilters = () => {
         this.setState({
-            color: null,
-            sizes: [],
-            price_range: [10, 30],
-            query: null,
+            filters: {
+                color: '',
+                sizes: {},
+                price_range: [10, 30],
+            },
+            query_string: null,
         })
-        this.props.updateFilterAction({filters: null})
+        this.props.updateFilterAction({filters: null, query_string: null})
+        
+        this.loadProducts({
+            ...this.props.filters,
+            filters: null,
+            query_string: null,
+            page: 1
+        });
     }
 
     componentWillMount() {
@@ -126,10 +148,17 @@ class Home extends Component {
 
     render() {
 
-        const { classes, products, total, isLoading } = this.props;
+        const { classes, products, total, isLoading, filters, categories, departments } = this.props;
 
         let currentProducts = products;
         const loading = isLoading && !total;
+        const { category_id, department_id } = filters;
+        const category = category_id ? categories.find(c => {
+            return c.category_id == category_id
+        }) : null;
+        const department = department_id ? departments.find(d => {
+            return d.department_id == department_id
+        }) : null;
 
         return (
             !loading && <div className={classes.root}>
@@ -138,23 +167,26 @@ class Home extends Component {
                         <div className="flex mb-4 contentHolder">
                             <div className="w-1/4 filterSection">
                                 <Paper className={classes.controlContainer} elevation={1}>
-                                    <div className={classes.filterBlock}>
-                                        <div className={classes.titleContainer}>
-                                            <span className={classes.controlsTopTitle}>
-                                                Filter Items
-                                            </span>
-                                        </div>
-                                        <div className={classes.filterItems}>
-                                            <div className="py-1">
-                                                <span className={classes.isGrey}>Category: </span>
-                                                <span>Regional</span>
+                                    { (category_id || department_id) && 
+                                        <div className={classes.filterBlock}>
+                                            <div className={classes.titleContainer}>
+                                                <span className={classes.controlsTopTitle}>
+                                                    Filter Items
+                                                </span>
                                             </div>
-                                            <div className="py-1 pb-2">
-                                                <span className={classes.isGrey}>Department: </span>
-                                                <span>French</span>
+                                            <div className={classes.filterItems}>
+                                                <div className="py-1">
+                                                    <span className={classes.isGrey}>Category: </span>
+                                                    <span>{department ? department.name : null}</span>
+                                                </div>
+                                                <div className="py-1 pb-2">
+                                                    <span className={classes.isGrey}>Department: </span>
+                                                    <span>{category ? category.name : null}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
+                                    
                                     <div className={classes.filterBodyContainer}>
                                         <div className={classes.colorBlock}>
                                             <div className={classes.titleContainer}>
@@ -164,7 +196,7 @@ class Home extends Component {
                                             </div>
                                             <div className={classes.colorRadiosContainer}>
                                                 <Radio
-                                                    checked={this.state.color === '#6eb2fb'}
+                                                    checked={this.state.filters.color === '#6eb2fb'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#6eb2fb' }}
                                                     size="small"
@@ -174,7 +206,7 @@ class Home extends Component {
                                                     aria-label="A"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#00d3ca'}
+                                                    checked={this.state.filters.color === '#00d3ca'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#00d3ca' }}
                                                     size="small"
@@ -184,7 +216,7 @@ class Home extends Component {
                                                     aria-label="B"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#f62f5e'}
+                                                    checked={this.state.filters.color === '#f62f5e'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#f62f5e' }}
                                                     size="small"
@@ -194,7 +226,7 @@ class Home extends Component {
                                                     aria-label="C"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#fe5c07'}
+                                                    checked={this.state.filters.color === '#fe5c07'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#fe5c07' }}
                                                     size="small"
@@ -204,7 +236,7 @@ class Home extends Component {
                                                     aria-label="D"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#f8e71c'}
+                                                    checked={this.state.filters.color === '#f8e71c'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#f8e71c' }}
                                                     size="small"
@@ -214,7 +246,7 @@ class Home extends Component {
                                                     aria-label="E"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#7ed321'}
+                                                    checked={this.state.filters.color === '#7ed321'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#7ed321' }}
                                                     size="small"
@@ -224,7 +256,7 @@ class Home extends Component {
                                                     aria-label="F"
                                                 />
                                                 <Radio
-                                                    checked={this.state.color === '#9013fe'}
+                                                    checked={this.state.filters.color === '#9013fe'}
                                                     onChange={this.handleColorRadioButton}
                                                     style={{ padding: 0, color: '#9013fe' }}
                                                     size="small"
@@ -243,30 +275,35 @@ class Home extends Component {
                                             </div>
                                             <div className={classes.sizeCheckboxes}>
                                                 <Checkbox
+                                                    checked={this.state.filters.sizes['XS'] ? true : false}
                                                     onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XS</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>XS</div>}
                                                     value="XS" />
                                                 <Checkbox
+                                                    checked={this.state.filters.sizes.S  ? true : false}
                                                     onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>S</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>S</div>}
                                                     value="S" />
                                                 <Checkbox
+                                                    checked={this.state.filters.sizes.M  ? true : false}
                                                     onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>M</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>M</div>}
                                                     value="M" />
                                                 <Checkbox
+                                                    checked={this.state.filters.sizes.L  ? true : false}
                                                     onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>L</div>}
                                                     icon={<div className={classes.sizeCheckboxUnchecked}>L</div>}
                                                     value="L" />
                                                 <Checkbox
+                                                    checked={this.state.filters.sizes.XL  ? true : false}
                                                     onChange={this.handleSizeCheckBox}
                                                     style={{ padding: 0 }}
                                                     checkedIcon={<div className={classes.sizeCheckboxChecked}>XL</div>}
@@ -286,7 +323,10 @@ class Home extends Component {
                                                     color="#f62f5e" 
                                                     defaultValue={[10, 30]}
                                                     min={0}
-                                                    max={500} range />
+                                                    max={500}
+                                                    value={this.state.filters.price_range}
+                                                    range
+                                                />
                                             </div>
                                             <div style={{
                                                 width: "100%",
@@ -294,9 +334,9 @@ class Home extends Component {
                                                 flexDirection: "row",
                                                 height: "24px"
                                             }}>
-                                                <div className={classes.rangesText}>{`£ ` + this.state.price_range[0]}</div>
+                                                <div className={classes.rangesText}>{`£ ` + this.state.filters.price_range[0]}</div>
                                                 <div style={{ flexGrow: 1 }} />
-                                                <div className={classes.rangesText}>{`£ ` + this.state.price_range[1]}</div>
+                                                <div className={classes.rangesText}>{`£ ` + this.state.filters.price_range[1]}</div>
                                             </div>
                                         </div>
                                         <div className={classes.searchBlock}>
@@ -315,6 +355,7 @@ class Home extends Component {
                                                     margin="dense"
                                                     variant="outlined"
                                                     name="search"
+                                                    value={this.state.query_string ? this.state.query_string : ''}
                                                 />
                                             </div>
                                         </div>
@@ -374,11 +415,13 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
-function mapStateToProps({ products, categories, departments, filters }) {
+function mapStateToProps({ products, category, departments, filters }) {
     return {
         total: products.all.data.count,
         products: products.all.data.rows,
         isLoading: products.all.isLoading,
+        departments: departments.departments,
+        categories: category.categories.rows,
         filters: filters,
     }
 }

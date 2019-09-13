@@ -42,7 +42,8 @@ class TextFieldFormsy extends Component {
             'select',
             'SelectProps',
             'type',
-            'variant'
+            'variant',
+            'helperText',
         ]);
 
         const errorMessage = this.props.getErrorMessage();
@@ -54,7 +55,7 @@ class TextFieldFormsy extends Component {
                 onChange={this.changeValue}
                 value={value}
                 error={Boolean(errorMessage)}
-                helperText={errorMessage}
+                helperText={errorMessage ? errorMessage : importedProps.helperText}
             />
         );
     }

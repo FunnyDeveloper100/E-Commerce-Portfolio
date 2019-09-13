@@ -54,6 +54,19 @@ const allProductsReducer = function (state = initialState, action) {
                     error: false
                 };
             }
+        case Actions.GET_PRODUCTS_SEARCH_SUCCESS:
+            {
+                return {
+                    ...state,
+                    data: action.payload,
+                    isLoading: false,
+                    error: false
+                };
+            }
+            case Actions.GET_PRODUCTS_SEARCH_ERROR:
+                {
+                    console.log(action.payload);
+                }
         default:
         {
             return state;

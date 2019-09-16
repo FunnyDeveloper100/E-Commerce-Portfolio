@@ -4,7 +4,6 @@ import {renderRoutes} from 'react-router-config'
 import {withStyles} from '@material-ui/core';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
-import jwt_decode from 'jwt-decode';
 import * as customersActions from '../../store/actions/customers';
 import AuthDialog from "../components/AuthDialog";
 import Header from '../components/Header';

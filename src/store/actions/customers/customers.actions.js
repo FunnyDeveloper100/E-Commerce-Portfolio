@@ -10,6 +10,10 @@ export const LOGOUT_CUSTOMER = 'LOGOUT_CUSTOMER';
 
 export const SET_CUSTOMER_FROM_TOKEN = 'SET_CUSTOMER_FROM_TOKEN';
 
+export const UPDATE_CUSTOMER_PROFILE = 'UPDATE_CUSTOMER_PROFILE';
+export const UPDATE_CUSTOMER_PROFILE_SUCCESS = 'UPDATE_CUSTOMER_PROFILE_SUCCESS';
+export const UPDATE_CUSTOMER_PROFILE_ERROR = 'UPDATE_CUSTOMER_PROFILE_ERROR';
+
 export const registerCustomerAction = (payload) => {
     return {
         type: REGISTER_CUSTOMER,
@@ -33,6 +37,13 @@ export const logoutCustomerAction = () => {
 export const setCustomerFromTokenAction = (payload) => {
     return {
         type: SET_CUSTOMER_FROM_TOKEN,
+        payload
+    }
+};
+
+export const updateCustomerProfileAction = (payload) => {
+    return {
+        type: UPDATE_CUSTOMER_PROFILE,
         payload
     }
 };

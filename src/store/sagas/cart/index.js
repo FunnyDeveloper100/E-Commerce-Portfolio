@@ -1,11 +1,11 @@
 import { all } from 'redux-saga/effects';
-import { loadCartSaga, addProductSaga, removeProductSaga } from './cart.saga';
+import { loadCartWatcher, addProductWatcher, removeProductWatcher } from './cart.saga';
 
 
 export default function* cartSaga() {
     yield all([
-        loadCartSaga(),
-        addProductSaga(),
-        removeProductSaga(),
+        loadCartWatcher(),
+        addProductWatcher(),
+        removeProductWatcher(),
     ]);
 }

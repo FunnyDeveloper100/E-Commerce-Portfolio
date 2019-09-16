@@ -34,7 +34,7 @@ class RegisterForm extends Component {
     }
 
     render() {
-        const {isSuccess, error} = this.props;
+        const {isSuccess} = this.props;
 
         if (isSuccess) {
             this.props.dispatch(Actions.hideAuth());

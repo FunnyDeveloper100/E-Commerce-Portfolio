@@ -1,8 +1,9 @@
-import * as Actions from '../../actions';
+import * as Actions from '../../actions/customers';
 
 const initialState = {
     token: null,
     customer: null,
+    isAuthenticated: false,
 };
 
 const auth = function (state = initialState, action) {
@@ -42,11 +43,20 @@ const auth = function (state = initialState, action) {
         }
         case Actions.LOGOUT_CUSTOMER:
         {
+            localStorage.removeItem('token');
             return {
+                isAuthenticated: false,
                 customer: null,
                 isSuccess: false,
             }
         }
+        case Actions.UPDATE_CUSTOMER_PROFILE_SUCCESS:
+            {
+                return {
+                    ...state,
+                    customer: action.customer,
+                }
+            }
         default:
         {
             return state;

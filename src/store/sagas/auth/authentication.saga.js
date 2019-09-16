@@ -9,6 +9,10 @@ import {
     LOGIN_CUSTOMER_ERROR,
     LOGOUT_CUSTOMER,
 
+    UPDATE_CUSTOMER_PROFILE,
+    UPDATE_CUSTOMER_PROFILE_SUCCESS,
+    UPDATE_CUSTOMER_PROFILE_ERROR,
+
     SET_CUSTOMER_FROM_TOKEN,
 }
     from "../../actions/customers";
@@ -51,6 +55,17 @@ function* setCustomerFromToken(action) {
     }
 }
 
+function* updateProfileCustomer(action) {
+    try {
+        const customer = yield call(customerService.getCustomerByToken, action.payload);
+        yield put({ type: UPDATE_CUSTOMER_PROFILE_SUCCESS, customer });
+    } catch (error) {
+        yield put({ type: LOGIN_CUSTOMER_ERROR, error })
+    }
+}
+
+
+
 export function* registerSaga() {
     yield takeLatest(REGISTER_CUSTOMER, registerCustomer);
 }
@@ -61,6 +76,10 @@ export function* loginSaga() {
 
 export function* logoutSaga() {
     yield takeLatest(LOGOUT_CUSTOMER, logoutCustomer);
+}
+
+export function* updateProfileSaga() {
+    yield takeLatest(UPDATE_CUSTOMER_PROFILE, updateProfileCustomer);
 }
 
 export function* setCustomerFromTokenSaga() {

@@ -55,7 +55,7 @@ class NavBar extends React.Component {
     handleDepartmentSelect = (event) => {
         const name = event.target.text;
         const department = this.props.departments.find(department => {
-            return department.name == name
+            return department.name === name
         })
 
         if (!department)
@@ -135,6 +135,7 @@ class NavBar extends React.Component {
                                     {category.name}
                                 </NavDropdown.Item>
                             }
+                            return null;
                         })
                     }
                 </NavDropdown>

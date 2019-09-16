@@ -46,13 +46,13 @@ class LoginForm extends Component {
 
     responseFacebook = (response) => {
         console.log(response);
-        if (response.status=='success')
+        if (response.status==='success')
             this.props.dispatch(Actions.hideAuth());
     }
 
     render() {
 
-        const { isSuccess, error } = this.props;
+        const { isSuccess } = this.props;
 
         if (isSuccess) {
             this.props.dispatch(Actions.hideAuth());

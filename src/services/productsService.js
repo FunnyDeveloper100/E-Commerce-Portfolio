@@ -161,7 +161,7 @@ class productsService extends EventEmitter {
                 review,
                 rating
             }).then(response => {
-                resolve(response.data.user);
+                resolve(response);
             }).catch((error) => {
                 reject(error.response);
             });

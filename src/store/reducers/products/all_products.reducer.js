@@ -66,6 +66,7 @@ const allProductsReducer = function (state = initialState, action) {
             case Actions.GET_PRODUCTS_SEARCH_ERROR:
                 {
                     console.log(action.payload);
+                    break;
                 }
         default:
         {

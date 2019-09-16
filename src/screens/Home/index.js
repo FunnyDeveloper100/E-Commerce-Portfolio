@@ -27,7 +27,6 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 import Close from '@material-ui/icons/Close';
-import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import Pagination from "material-ui-flat-pagination";
 import * as productActions from '../../store/actions/products'
 import * as filterActions from '../../store/actions/filters'
@@ -154,10 +153,10 @@ class Home extends Component {
         const loading = isLoading && !total;
         const { category_id, department_id } = filters;
         const category = category_id ? categories.find(c => {
-            return c.category_id == category_id
+            return c.category_id === category_id
         }) : null;
         const department = department_id ? departments.find(d => {
-            return d.department_id == department_id
+            return d.department_id === department_id
         }) : null;
 
         return (

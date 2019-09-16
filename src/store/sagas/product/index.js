@@ -2,7 +2,7 @@ import { all } from 'redux-saga/effects';
 import { getSingleProductWatcher } from './single_product.saga';
 import { getProductDetailsWatcher } from './product_details.saga';
 import { getProductLocationsWatcher } from './product_locations.saga';
-import { getProductReviewsWatcher } from './product_reviews.saga';
+import { getProductReviewsWatcher, createProductReviewsWatcher } from './product_reviews.saga';
 
 export default function* productsSaga() {
     yield all([
@@ -10,5 +10,6 @@ export default function* productsSaga() {
         getProductDetailsWatcher(),
         getProductLocationsWatcher(),
         getProductReviewsWatcher(),
+        createProductReviewsWatcher(),
     ]);
 }

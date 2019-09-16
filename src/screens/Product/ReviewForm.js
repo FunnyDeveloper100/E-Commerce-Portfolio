@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {Button, Fab, withStyles} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {Button, withStyles} from '@material-ui/core';
 import StarRatings from "react-star-ratings";
 import {TextFieldFormsy} from '../../components/Formsy';
 import Formsy from 'formsy-react';
 import styles from './styles';
-import * as customersActions from '../../store/actions/customers';
-import * as productsActions from '../../store/actions/products';
+import * as productActions from '../../store/actions/product';
 
 class RegisterForm extends Component {
 
@@ -29,8 +27,11 @@ class RegisterForm extends Component {
     }
 
     onSubmit = (formdata) => {
-        console.log(this.state.productId, this.state.rating);
-        console.log(formdata);
+        this.props.createProductReviews({
+            product_id: this.state.productId,
+            rating: this.state.rating,
+            review: formdata.review,
+        })
     }
     render() {
         const { classes } = this.props;
@@ -122,7 +123,7 @@ class RegisterForm extends Component {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        setCustomerFromTokenAction: customersActions.setCustomerFromTokenAction,
+        createProductReviews: productActions.createProductReviews
     }, dispatch);
 }
 

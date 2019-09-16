@@ -1,5 +1,4 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
 import {setAuthToken} from '../utils/API';
 import EventEmitter from '../utils/EventEmitter';
 import systemConfig from '../config/system';
@@ -57,6 +56,16 @@ class customerService extends EventEmitter {
 
     logoutCustomerService = () => {
         localStorage.removeItem('token');
+    }
+
+    updateProfileCustomer = (request) => {
+        return new Promise((resolve, reject) => {
+            axios.put(systemConfig.serverBaseUrl + '/customer', request).then(response => {
+                resolve(response.data);
+            }).catch((error) => {
+                reject(error.response);
+            })
+        })
     }
 }
 

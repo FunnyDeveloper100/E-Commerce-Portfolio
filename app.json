@@ -1,0 +1,16 @@
+{
+  "addons": [
+
+  ],
+  "buildpacks": [
+
+  ],
+  "env": {
+  },
+  "formation": {
+  },
+  "name": "E-Commerce",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}

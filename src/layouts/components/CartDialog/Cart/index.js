@@ -89,7 +89,7 @@ class Cart extends Component {
                             </div>
                         </div>
                         <div className="w-2/12">
-                            <span className={`cart-item-price ${classes.priceText}`}>£ <span>{this.state.item.price * this.state.item.quantity}</span></span>
+                            <span className={`cart-item-price ${classes.priceText}`}>£ <span>{Math.round(this.state.item.price * this.state.item.quantity)}</span></span>
                         </div>
                     </div>
             </div>

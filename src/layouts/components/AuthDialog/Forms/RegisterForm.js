@@ -23,6 +23,7 @@ class RegisterForm extends Component {
 
     onSubmit(formdata) {
         this.props.dispatch(Actions.registerCustomerAction(formdata))
+        this.forceUpdate();
     }
 
     enableButton() {
@@ -34,12 +35,8 @@ class RegisterForm extends Component {
     }
 
     render() {
-        const {isSuccess} = this.props;
-
-        if (isSuccess) {
-            this.props.dispatch(Actions.hideAuth());
-        }
-
+        const {isSuccess, error } = this.props;
+        
         return (
             <div className="w-full flex flex-row justify-center">
                 <Formsy

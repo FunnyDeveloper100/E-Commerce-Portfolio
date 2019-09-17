@@ -1,4 +1,4 @@
-import { put, takeLatest, call } from 'redux-saga/effects';
+import { put, takeLatest, call, all } from 'redux-saga/effects';
 import customerService from '../../../services/customerService';
 import {
     REGISTER_CUSTOMER,
@@ -16,6 +16,9 @@ import {
     SET_CUSTOMER_FROM_TOKEN,
 }
     from "../../actions/customers";
+import {
+    SHOW_TOAST,
+} from "../../actions/alerts";
 
 function* registerCustomer(action) {
     try {
@@ -23,7 +26,13 @@ function* registerCustomer(action) {
         
         yield put({ type: REGISTER_CUSTOMER_SUCCESS, customer });
     } catch (error) {
-        yield put({ type: REGISTER_CUSTOMER_ERROR, error });
+        yield all([
+            put({ type: REGISTER_CUSTOMER_ERROR, error }),
+            put({ type: SHOW_TOAST, payload: {
+                message: error.data.error.message,
+                variant: 'error',
+            }}),
+        ]);
     }
 }
 
@@ -33,7 +42,13 @@ function* loginCustomer(action) {
         
         yield put({ type: LOGIN_CUSTOMER_SUCCESS, customer });
     } catch (error) {
-        yield put({ type: LOGIN_CUSTOMER_ERROR, error })
+        yield all([
+            put({ type: LOGIN_CUSTOMER_ERROR, error }),
+            put({ type: SHOW_TOAST, payload: {
+                message: error.data.error.message,
+                variant: 'error',
+            }}),
+        ]);
     }
 }
 

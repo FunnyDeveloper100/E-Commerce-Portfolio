@@ -16,7 +16,7 @@ class productsService extends EventEmitter {
     };
 
     checkProduct = (p, filters) => {
-        const price = p.discounted_price ? p.discounted_price : p.price
+        const price = p.discounted_price > 0 ? p.discounted_price : p.price
         if (price > filters.price_range[1] || price < filters.price_range[0]) 
             return false;
         return true

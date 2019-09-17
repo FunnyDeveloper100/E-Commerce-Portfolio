@@ -22,10 +22,10 @@ import {
 function* getAllProductsSaga(action) {
     try {
         const {category_id, department_id, query_string} = action.payload;
-        if (department_id) {
-            yield put({type: GET_PRODUCTS_IN_DEPARTMENT, payload: action.payload})
-        } else if (category_id) {
+        if ( category_id) {
             yield put({type: GET_PRODUCTS_IN_CATEGORY, payload: action.payload})
+        } else if (department_id) {
+            yield put({type: GET_PRODUCTS_IN_DEPARTMENT, payload: action.payload})
         } else if (query_string) {
             yield put({type: GET_PRODUCTS_SEARCH, payload: action.payload})
         } else {

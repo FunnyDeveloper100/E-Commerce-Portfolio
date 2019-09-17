@@ -38,7 +38,7 @@ import SubscribeBar from '../../components/SubscribeBar';
 import './styles.css';
 
 class Home extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -53,6 +53,7 @@ class Home extends Component {
 
     loadProducts = (payload) => {
         this.props.getAllProducts(payload);
+        this.forceUpdate();
     }
 
     handlePageButtonClick = (offset, page) => {
@@ -116,6 +117,8 @@ class Home extends Component {
             query_string: this.state.query_string,
             page: 1
         });
+
+        this.forceUpdate();
     }
 
     resetFilters = () => {
@@ -135,6 +138,8 @@ class Home extends Component {
             query_string: null,
             page: 1
         });
+
+        this.forceUpdate();
     }
 
     componentWillMount() {
@@ -153,10 +158,10 @@ class Home extends Component {
         const loading = isLoading && !total;
         const { category_id, department_id } = filters;
         const category = category_id ? categories.find(c => {
-            return c.category_id === category_id
+            return c.category_id == category_id
         }) : null;
         const department = department_id ? departments.find(d => {
-            return d.department_id === department_id
+            return d.department_id == department_id
         }) : null;
 
         return (
@@ -374,6 +379,7 @@ class Home extends Component {
                             </div>
                             <div className="w-3/4">
                                 <div className="flex justify-center">
+                                    {total && total > this.props.filters.limit ? 
                                     <Pagination
                                         limit={this.props.filters.limit}
                                         offset={this.props.filters.offset}
@@ -381,7 +387,7 @@ class Home extends Component {
                                         onClick={(event, offset, page) => this.handlePageButtonClick(offset, page)}
                                         size='small'
                                         otherPageColor='default'
-                                    />
+                                    /> : null}
                                 </div>
                                 <div className=" flex flex-wrap ml-6 productsSection">
                                     {currentProducts.map((product, index) => (

@@ -113,7 +113,7 @@ class LoginForm extends Component {
                         <div className="socialButtonsHolder">
                             <div>
                                 <FacebookLogin
-                                    appId="1088597931155576"
+                                    appId="352854622106208"
                                     autoLoad={false}
                                     fields="name,email,picture"
                                     callback={this.responseFacebook}

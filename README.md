@@ -1,4 +1,4 @@
-# Turing Front-end Challenge Template
+# My E-Commerce site
 
 ## Important Note
 Before using this template, please check dependencies.
